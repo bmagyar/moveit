@@ -12,10 +12,12 @@ include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 
 find_package(catkin COMPONENTS
+  geometry_msgs
   moveit_core
   moveit_ros_planning
   pluginlib
   roscpp
+  std_msgs
   REQUIRED)
 
 include_directories(${catkin_INCLUDE_DIRS})

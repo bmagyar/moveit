@@ -41,6 +41,9 @@
 #include <ros/rate.h>
 #include <boost/thread/thread.hpp>
 
+#include <geometry_msgs/Twist.h>
+#include <std_msgs/Float64MultiArray.h>
+
 #ifndef MOVEIT_FAKE_CONTROLLERS
 #define MOVEIT_FAKE_CONTROLLERS
 
@@ -115,6 +118,19 @@ class InterpolatingController : public ThreadedController
 public:
   InterpolatingController(const std::string& name, const std::vector<std::string>& joints, const ros::Publisher& pub);
   ~InterpolatingController();
+
+protected:
+  virtual void execTrajectory(const moveit_msgs::RobotTrajectory& t);
+
+private:
+  ros::WallRate rate_;
+};
+
+class WholeBodyController : public ThreadedController
+{
+public:
+	WholeBodyController(const std::string& name, const std::vector<std::string>& joints, const ros::Publisher& arm_pub, const ros::Publisher& base_pub);
+  ~WholeBodyController(){};
 
 protected:
   virtual void execTrajectory(const moveit_msgs::RobotTrajectory& t);

@@ -103,12 +103,19 @@ public:
 
         const std::string& type =
             controller_list[i].hasMember("type") ? std::string(controller_list[i]["type"]) : DEFAULT_TYPE;
+
+        ROS_INFO_STREAM("Controller type:  "<< type);
         if (type == "last point")
           controllers_[name].reset(new LastPointController(name, joints, pub_));
         else if (type == "via points")
           controllers_[name].reset(new ViaPointController(name, joints, pub_));
         else if (type == "interpolate")
           controllers_[name].reset(new InterpolatingController(name, joints, pub_));
+        else if (type == "WholeBodyTrajectory"){
+          arm_pub_ = node_handle_.advertise<std_msgs::Float64MultiArray>("/arm/joint_group_velocity_controller/command", 100, false);
+          base_pub_ = node_handle_.advertise<geometry_msgs::Twist>("/base/command", 100, false);
+          controllers_[name].reset(new WholeBodyController(name, joints, arm_pub_,base_pub_));
+        }
         else
           ROS_ERROR_STREAM("Unknown fake controller type: " << type);
       }
@@ -277,6 +284,8 @@ public:
 protected:
   ros::NodeHandle node_handle_;
   ros::Publisher pub_;
+  ros::Publisher arm_pub_;
+  ros::Publisher base_pub_;
   std::map<std::string, BaseFakeControllerPtr> controllers_;
 };
 

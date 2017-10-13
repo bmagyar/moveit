@@ -76,7 +76,7 @@ LastPointController::~LastPointController()
 
 bool LastPointController::sendTrajectory(const moveit_msgs::RobotTrajectory& t)
 {
-  ROS_INFO("Fake execution of trajectory");
+  ROS_WARN("Bruno execution of trajectory");
   if (t.joint_trajectory.points.empty())
     return true;
 
@@ -162,7 +162,7 @@ ViaPointController::~ViaPointController()
 
 void ViaPointController::execTrajectory(const moveit_msgs::RobotTrajectory& t)
 {
-  ROS_INFO("Fake execution of trajectory");
+  ROS_WARN("Bruno execution of trajectory");
   sensor_msgs::JointState js;
   js.header = t.joint_trajectory.header;
   js.name = t.joint_trajectory.joint_names;
@@ -223,7 +223,7 @@ void interpolate(sensor_msgs::JointState& js, const trajectory_msgs::JointTrajec
 
 void InterpolatingController::execTrajectory(const moveit_msgs::RobotTrajectory& t)
 {
-  ROS_INFO("Fake execution of trajectory");
+  ROS_WARN("Bruno execution of trajectory");
   if (t.joint_trajectory.points.empty())
     return;
 
@@ -272,6 +272,21 @@ void InterpolatingController::execTrajectory(const moveit_msgs::RobotTrajectory&
   pub_.publish(js);
 
   ROS_DEBUG("Fake execution of trajectory: done");
+}
+
+WholeBodyController::WholeBodyController(const std::string& name, const std::vector<std::string>& joints, const ros::Publisher& arm_pub,
+		const ros::Publisher& base_pub)
+  : ThreadedController(name, joints, base_pub), rate_(10)
+{
+  double r;
+  if (ros::param::get("~fake_interpolating_controller_rate", r))
+    rate_ = ros::WallRate(r);
+}
+
+void WholeBodyController::execTrajectory(const moveit_msgs::RobotTrajectory& t)
+{
+	ROS_WARN("WHOLE BODY CONTROLLER execution of trajectory");
+
 }
 
 }  // end namespace moveit_fake_controller_manager
