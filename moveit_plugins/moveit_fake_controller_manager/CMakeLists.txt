@@ -20,18 +20,18 @@ find_package(catkin COMPONENTS
   std_msgs
   REQUIRED)
 
-include_directories(${catkin_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS})
 link_directories(${catkin_LIBRARY_DIRS})
 
 catkin_package(
   LIBRARIES
   INCLUDE_DIRS
+    include
   DEPENDS
     moveit_core
     moveit_ros_planning
     )
 
-include_directories(include/${PROJECT_NAME})
 
 add_library(${PROJECT_NAME}
    src/moveit_fake_controller_manager.cpp
