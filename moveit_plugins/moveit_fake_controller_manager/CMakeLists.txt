@@ -31,7 +31,7 @@ catkin_package(
     moveit_ros_planning
     )
 
-include_directories(include)
+include_directories(include/${PROJECT_NAME})
 
 add_library(${PROJECT_NAME}
    src/moveit_fake_controller_manager.cpp
@@ -44,3 +44,4 @@ install(TARGETS ${PROJECT_NAME} LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINA
 install(FILES moveit_fake_controller_manager_plugin_description.xml
         DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
        )
+install(DIRECTORY include/${PROJECT_NAME}/ DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
