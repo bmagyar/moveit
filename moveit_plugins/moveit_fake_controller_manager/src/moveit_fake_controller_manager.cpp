@@ -34,7 +34,7 @@
 
 /* Author: Ioan Sucan, Dave Coleman, Robert Haschke */
 
-#include "moveit_fake_controllers.h"
+#include <moveit_fake_controller_manager/moveit_fake_controllers.h>
 #include <ros/ros.h>
 #include <moveit/robot_state/robot_state.h>
 #include <moveit/robot_model_loader/robot_model_loader.h>
