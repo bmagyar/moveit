@@ -61,6 +61,8 @@
 #include <moveit_msgs/GetPlannerParams.h>
 #include <moveit_msgs/SetPlannerParams.h>
 
+
+
 #include <actionlib/client/simple_action_client.h>
 #include <eigen_conversions/eigen_msg.h>
 #include <std_msgs/String.h>
@@ -746,6 +748,10 @@ public:
 
   MoveItErrorCode planGraspsAndPick(const std::string& object)
   {
+    if (object.empty())
+    {
+      return planGraspsAndPick(moveit_msgs::CollisionObject());
+    }
     moveit::planning_interface::PlanningSceneInterface psi;
 
     std::map<std::string, moveit_msgs::CollisionObject> objects = psi.getObjects(std::vector<std::string>(1, object));
@@ -826,6 +832,43 @@ public:
                                                              << move_action_client_->getState().getText());
       return MoveItErrorCode(move_action_client_->getResult()->error_code);
     }
+  }
+
+  MoveItErrorCode plan(Plan& plan, moveit_msgs::MoveGroupGoal& goal)
+  {
+	    if (!move_action_client_)
+	    {
+	      return MoveItErrorCode(moveit_msgs::MoveItErrorCodes::FAILURE);
+	    }
+	    if (!move_action_client_->isServerConnected())
+	    {
+	      return MoveItErrorCode(moveit_msgs::MoveItErrorCodes::FAILURE);
+	    }
+
+	    goal.planning_options.plan_only = true;
+	    goal.planning_options.look_around = false;
+	    goal.planning_options.replan = false;
+	    goal.planning_options.planning_scene_diff.is_diff = true;
+	    goal.planning_options.planning_scene_diff.robot_state.is_diff = true;
+
+	    move_action_client_->sendGoal(goal);
+	    if (!move_action_client_->waitForResult())
+	    {
+	      ROS_INFO_STREAM_NAMED("move_group_interface", "MoveGroup action returned early");
+	    }
+	    if (move_action_client_->getState() == actionlib::SimpleClientGoalState::SUCCEEDED)
+	    {
+	      plan.trajectory_ = move_action_client_->getResult()->planned_trajectory;
+	      plan.start_state_ = move_action_client_->getResult()->trajectory_start;
+	      plan.planning_time_ = move_action_client_->getResult()->planning_time;
+	      return MoveItErrorCode(move_action_client_->getResult()->error_code);
+	    }
+	    else
+	    {
+	      ROS_WARN_STREAM_NAMED("move_group_interface", "Fail: " << move_action_client_->getState().toString() << ": "
+	                                                             << move_action_client_->getState().getText());
+	      return MoveItErrorCode(move_action_client_->getResult()->error_code);
+	    }
   }
 
   MoveItErrorCode move(bool wait)
@@ -941,6 +984,7 @@ public:
     req.jump_threshold = jump_threshold;
     req.path_constraints = path_constraints;
     req.avoid_collisions = avoid_collisions;
+    req.link_name = getEndEffectorLink();
 
     if (cartesian_path_service_.call(req, res))
     {
@@ -1463,6 +1507,11 @@ moveit::planning_interface::MoveItErrorCode moveit::planning_interface::MoveGrou
 moveit::planning_interface::MoveItErrorCode moveit::planning_interface::MoveGroupInterface::plan(Plan& plan)
 {
   return impl_->plan(plan);
+}
+
+moveit::planning_interface::MoveItErrorCode moveit::planning_interface::MoveGroupInterface::plan(Plan& plan, moveit_msgs::MoveGroupGoal& goal)
+{
+  return impl_->plan(plan, goal);
 }
 
 moveit::planning_interface::MoveItErrorCode

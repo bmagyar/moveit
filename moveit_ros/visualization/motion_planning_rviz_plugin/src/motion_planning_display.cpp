@@ -133,9 +133,10 @@ MotionPlanningDisplay::MotionPlanningDisplay()
   query_goal_state_property_ =
       new rviz::BoolProperty("Query Goal State", true, "Shows the goal state for the motion planning query",
                              plan_category_, SLOT(changedQueryGoalState()), this);
-  query_marker_scale_property_ = new rviz::FloatProperty(
-      "Interactive Marker Size", 0.0f, "Specifies scale of the interactive marker overlayed on the robot",
-      plan_category_, SLOT(changedQueryMarkerScale()), this);
+  query_marker_scale_property_ =
+      new rviz::FloatProperty("Interactive Marker Size", 0.0f,
+                              "Specifies scale of the interactive marker overlayed on the robot. 0 is auto scale.",
+                              plan_category_, SLOT(changedQueryMarkerScale()), this);
   query_marker_scale_property_->setMin(0.0f);
 
   query_start_color_property_ =
@@ -186,6 +187,8 @@ MotionPlanningDisplay::~MotionPlanningDisplay()
 
   delete text_to_display_;
   delete int_marker_display_;
+  if (frame_dock_)
+    delete frame_dock_;
 }
 
 void MotionPlanningDisplay::onInitialize()
@@ -227,7 +230,7 @@ void MotionPlanningDisplay::onInitialize()
 
   if (window_context)
   {
-    frame_dock_ = window_context->addPane("Motion Planning", frame_);
+    frame_dock_ = window_context->addPane(getName(), frame_);
     connect(frame_dock_, SIGNAL(visibilityChanged(bool)), this, SLOT(motionPanelVisibilityChange(bool)));
     frame_dock_->setIcon(getIcon());
   }
@@ -302,6 +305,17 @@ void MotionPlanningDisplay::reset()
 
   query_robot_start_->setVisible(query_start_state_property_->getBool());
   query_robot_goal_->setVisible(query_goal_state_property_->getBool());
+}
+
+void MotionPlanningDisplay::setName(const QString& name)
+{
+  BoolProperty::setName(name);
+  if (frame_dock_)
+  {
+    frame_dock_->setWindowTitle(name);
+    frame_dock_->setObjectName(name);
+  }
+  trajectory_visual_->setName(name);
 }
 
 void MotionPlanningDisplay::backgroundJobUpdate(moveit::tools::BackgroundProcessing::JobEvent, const std::string&)

@@ -2,6 +2,27 @@
 Changelog for package moveit_kinematics
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.9.9 (2017-08-06)
+------------------
+* [improve] Modify ikfast_template for getPositionIK single solution results (`#537 <https://github.com/ros-planning/moveit/issues/537>`_)
+* Contributors: nsnitish
+
+0.9.8 (2017-06-21)
+------------------
+* [build] ikfast_kinematics_plugin: Write XML files as UTF-8 (`#514 <https://github.com/ros-planning/moveit/issues/514>`_)
+* [build] adjust cmake_minimum_required for add_compile_options (`#521 <https://github.com/ros-planning/moveit/issues/521>`_)
+* [build] ikfast_kinematics_plugin: Add c++11 compile option. This is required for Kinetic.
+* Contributors: Martin Guenther, Michael Goerner
+
+0.9.7 (2017-06-05)
+------------------
+* [fix][Kinetic+] ikfast_kinematics_plugin: Add c++11 compile option `#515 <https://github.com/ros-planning/moveit/pull/515>`_
+* [fix][Indigo] moveit_kinematics Eigen3 dependency (`#470 <https://github.com/ros-planning/moveit/issues/470>`_)
+* Contributors: Martin Guenther, YuehChuan
+
+0.9.6 (2017-04-12)
+------------------
+
 0.9.5 (2017-03-08)
 ------------------
 * [fix][moveit_ros_warehouse] gcc6 build error `#423 <https://github.com/ros-planning/moveit/pull/423>`_ 

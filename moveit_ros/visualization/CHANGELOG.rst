@@ -2,6 +2,33 @@
 Changelog for package moveit_ros_visualization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.9.9 (2017-08-06)
+------------------
+* [fix] RobotStateVisualization: clear before load to avoid segfault `#572 <https://github.com/ros-planning/moveit/pull/572>`_
+* Contributors: v4hn
+
+0.9.8 (2017-06-21)
+------------------
+* [fix] TrajectoryVisualization crash if no window_context exists (`#523 <https://github.com/ros-planning/moveit/issues/523>`_, `#525 <https://github.com/ros-planning/moveit/issues/525>`_)
+* [fix] robot display: Don't reload robot model upon topic change (Fixes `#528 <https://github.com/ros-planning/moveit/issues/528>`_)
+* [build] add Qt-moc guards for boost 1.64 compatibility (`#534 <https://github.com/ros-planning/moveit/issues/534>`_)
+* [enhance] rviz display: stop trajectory visualization on new plan. Fixes `#526 <https://github.com/ros-planning/moveit/issues/526>`_ (`#531 <https://github.com/ros-planning/moveit/issues/531>`_, `#510 <https://github.com/ros-planning/moveit/issues/510>`_).
+* Contributors: Isaac I.Y. Saito, Simon Schmeisser, Yannick Jonetzko, henhenhen, v4hn
+
+
+0.9.7 (2017-06-05)
+------------------
+* [capability] New panel with a slider to control the visualized trajectory (`#491 <https://github.com/ros-planning/moveit/issues/491>`_) (`#508 <https://github.com/ros-planning/moveit/issues/508>`_)
+* [fix] Build for Ubuntu YZ by adding BOOST_MATH_DISABLE_FLOAT128 (`#505 <https://github.com/ros-planning/moveit/issues/505>`_)
+* Contributors: Dave Coleman, Mikael Arguedas
+
+0.9.6 (2017-04-12)
+------------------
+* [fix] RViz plugin some cosmetics and minor refactoring `#482 <https://github.com/ros-planning/moveit/issues/482>`_
+* [fix] rviz panel: Don't add object marker if the wrong tab is selected `#454 <https://github.com/ros-planning/moveit/pull/454>`_
+* [improve] RobotState display [kinetic] (`#465 <https://github.com/ros-planning/moveit/issues/465>`_)
+* Contributors: Jorge Nicho, Michael Goerner, Yannick Jonetzko
+
 0.9.5 (2017-03-08)
 ------------------
 * [fix] correct "simplify widget handling" `#452 <https://github.com/ros-planning/moveit/pull/452>`_ This reverts "simplify widget handling (`#442 <https://github.com/ros-planning/moveit/issues/442>`_)" 

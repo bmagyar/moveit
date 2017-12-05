@@ -2,6 +2,20 @@
 Changelog for package moveit_simple_controller_manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+0.9.9 (2017-08-06)
+------------------
+
+0.9.8 (2017-06-21)
+------------------
+* [fix] include order (`#529 <https://github.com/ros-planning/moveit/issues/529>`_)
+* Contributors: Michael Goerner
+
+0.9.7 (2017-06-05)
+------------------
+
+0.9.6 (2017-04-12)
+------------------
+
 0.9.5 (2017-03-08)
 ------------------
 * [fix][moveit_ros_warehouse] gcc6 build error `#423 <https://github.com/ros-planning/moveit/pull/423>`_ 

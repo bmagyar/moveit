@@ -288,9 +288,13 @@ void RobotStateDisplay::changedRobotSceneAlpha()
 void RobotStateDisplay::changedRobotStateTopic()
 {
   robot_state_subscriber_.shutdown();
-  robot_->clear();
-  load_robot_model_ = true;
-  robot_state_subscriber_ = root_nh_.subscribe(robot_state_topic_property_->getTopicStd(), 10,
+
+  // reset model to default state, we don't want to show previous messages
+  if (static_cast<bool>(kstate_))
+    kstate_->setToDefaultValues();
+  update_state_ = true;
+
+  robot_state_subscriber_ = root_nh_.subscribe(robot_state_topic_property_->getStdString(), 10,
                                                &RobotStateDisplay::newRobotStateCallback, this);
 }
 
@@ -372,7 +376,6 @@ void RobotStateDisplay::onEnable()
   Display::onEnable();
   load_robot_model_ = true;  // allow loading of robot model in update()
   calculateOffsetPosition();
-  changedRobotStateTopic();
 }
 
 // ******************************************************************************************
@@ -391,7 +394,10 @@ void RobotStateDisplay::update(float wall_dt, float ros_dt)
   Display::update(wall_dt, ros_dt);
 
   if (load_robot_model_)
+  {
     loadRobotModel();
+    changedRobotStateTopic();
+  }
 
   calculateOffsetPosition();
   if (robot_ && update_state_)
