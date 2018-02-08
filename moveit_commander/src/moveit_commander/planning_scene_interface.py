@@ -65,7 +65,6 @@ class PlanningSceneInterface(object):
         self._apply_planning_scene_diff = rospy.ServiceProxy('apply_planning_scene', ApplyPlanningScene)
         self._apply_planning_scene_diff.wait_for_service(10.0)
 
-
     def add_sphere(self, name, pose, radius = 1):
         """
         Add a sphere to the planning scene 
@@ -107,7 +106,7 @@ class PlanningSceneInterface(object):
         
     def attach_mesh(self, link, name, pose = None, filename = '', size = (1, 1, 1), touch_links = []):
         aco = AttachedCollisionObject()
-        if pose!=None and filename:
+        if (pose is not None) and filename:
             aco.object = self.__make_mesh(name, pose, filename, size)
         else:
             aco.object = self.__make_existing(name)
@@ -119,7 +118,7 @@ class PlanningSceneInterface(object):
 
     def attach_box(self, link, name, pose = None, size = (1, 1, 1), touch_links = []):
         aco = AttachedCollisionObject()
-        if pose!=None:
+        if pose is not None:
             aco.object = self.__make_box(name, pose, size)
         else:
             aco.object = self.__make_existing(name)
@@ -136,7 +135,7 @@ class PlanningSceneInterface(object):
         """
         co = CollisionObject()
         co.operation = CollisionObject.REMOVE
-        if name != None:
+        if name is not None:
             co.id = name
         self._pub_co.publish(co)
 
@@ -147,7 +146,7 @@ class PlanningSceneInterface(object):
         aco = AttachedCollisionObject()
         aco.object.operation = CollisionObject.REMOVE
         aco.link_name = link
-        if name != None:
+        if name is not None:
             aco.object.id = name
         self._pub_aco.publish(aco)
 
