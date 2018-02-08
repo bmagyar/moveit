@@ -37,7 +37,7 @@ import conversions
 
 from moveit_msgs.msg import CollisionObject, AttachedCollisionObject
 from moveit_ros_planning_interface import _moveit_planning_scene_interface
-from geometry_msgs.msg import PoseStamped, Pose, Point
+from geometry_msgs.msg import Pose, Point
 from shape_msgs.msg import SolidPrimitive, Plane, Mesh, MeshTriangle
 from exception import MoveItCommanderException
 
@@ -62,17 +62,6 @@ class PlanningSceneInterface(object):
         self._pub_co = rospy.Publisher('/collision_object', CollisionObject, queue_size=100)
         self._pub_aco = rospy.Publisher('/attached_collision_object', AttachedCollisionObject, queue_size=100)
 
-    def __make_sphere(self, name, pose, radius):
-        co = CollisionObject()
-        co.operation = CollisionObject.ADD
-        co.id = name
-        co.header = pose.header
-        sphere = SolidPrimitive()
-        sphere.type = SolidPrimitive.SPHERE
-        sphere.dimensions = [radius]
-        co.primitives = [sphere]
-        co.primitive_poses = [pose.pose]
-        return co
 
     def add_sphere(self, name, pose, radius = 1):
         """
