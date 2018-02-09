@@ -227,7 +227,10 @@ class PlanningSceneInterface(object):
         if pyassimp is False:
             raise MoveItCommanderException(
                 "Pyassimp needs patch https://launchpadlibrarian.net/319496602/patchPyassim.txt")
-        scene = pyassimp.load(filename)
+        try:
+            scene = pyassimp.load(filename)
+        except pyassimp.AssimpError as e:
+            raise MoveItCommanderException(e.message)
         if not scene.meshes or len(scene.meshes) == 0:
             raise MoveItCommanderException("There are no meshes in the file")
         if len(scene.meshes[0].faces) == 0:
