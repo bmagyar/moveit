@@ -341,9 +341,9 @@ void ChompOptimizer::optimize()
   // iterate
   for (iteration_ = 0; iteration_ < parameters_->getMaxIterations(); iteration_++)
   {
-    ros::WallTime for_time = ros::WallTime::now();
+    //ros::WallTime for_time = ros::WallTime::now();
     performForwardKinematics();
-    ROS_INFO_STREAM("Forward kinematics took " << (ros::WallTime::now() - for_time));
+    //ROS_INFO_STREAM("Forward kinematics took " << (ros::WallTime::now() - for_time));
     double cCost = getCollisionCost();
     double sCost = getSmoothnessCost();
     double cost = cCost + sCost;
@@ -381,7 +381,7 @@ void ChompOptimizer::optimize()
       }
     }
     calculateSmoothnessIncrements();
-    ros::WallTime coll_time = ros::WallTime::now();
+    //ros::WallTime coll_time = ros::WallTime::now();
     calculateCollisionIncrements();
     // ROS_INFO_STREAM("Collision increments took " << (ros::WallTime::now()-coll_time));
     calculateTotalIncrements();
@@ -408,7 +408,7 @@ void ChompOptimizer::optimize()
       if (isCurrentTrajectoryMeshToMeshCollisionFree())
       {
         num_collision_free_iterations_ = 0;
-        ROS_INFO("Chomp Got mesh to mesh safety at iter %d. Breaking out early.", iteration_);
+        //ROS_INFO("Chomp Got mesh to mesh safety at iter %d. Breaking out early.", iteration_);
         is_collision_free_ = true;
         iteration_++;
         should_break_out = true;
@@ -575,7 +575,7 @@ bool ChompOptimizer::isCurrentTrajectoryMeshToMeshCollisionFree() const
   }
   moveit_msgs::RobotState start_state_msg;
   moveit::core::robotStateToRobotStateMsg(start_state_, start_state_msg);
-  return planning_scene_->isPathValid(start_state_msg, traj);
+  return planning_scene_->isPathValid(start_state_msg, traj, planning_group_);
 }
 
 // CollisionProximitySpace::TrajectorySafety ChompOptimizer::checkCurrentIterValidity()
