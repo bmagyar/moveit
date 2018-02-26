@@ -3,12 +3,14 @@ project(chomp_motion_planner)
 
 add_definitions(-std=c++11)
 
-find_package(catkin REQUIRED COMPONENTS roscpp moveit_experimental moveit_core)
+find_package(catkin REQUIRED COMPONENTS roscpp moveit_experimental moveit_core trac_ik_lib)
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
 )
+
+
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
