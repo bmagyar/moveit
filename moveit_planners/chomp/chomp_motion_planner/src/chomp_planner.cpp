@@ -66,12 +66,13 @@ bool ChompPlanner::solve(const planning_scene::PlanningSceneConstPtr& planning_s
     return false;
   }
 
-  if (not planning_scene->getRobotModel()->satisfiesPositionBounds(req.start_state.joint_state.position.data()))
-  {
-    ROS_ERROR_STREAM_NAMED("chomp_planner", "Start state violates joint limits");
-    res.error_code.val = moveit_msgs::MoveItErrorCodes::INVALID_ROBOT_STATE;
-    return false;
-  }
+  // TODO: have to look into this more
+//  if (not planning_scene->getRobotModel()->satisfiesPositionBounds(req.start_state.joint_state.position.data()))
+//  {
+//    ROS_ERROR_STREAM_NAMED("chomp_planner", "Start state violates joint limits");
+//    res.error_code.val = moveit_msgs::MoveItErrorCodes::INVALID_ROBOT_STATE;
+//    return false;
+//  }
 
   ros::WallTime start_time = ros::WallTime::now();
   ChompTrajectory trajectory(planning_scene->getRobotModel(), 3.0, .03, req.group_name);
