@@ -393,13 +393,6 @@ public:
     return getPlannerId().c_str();
   }
 
-  std::string getPlanPython()
-  {
-    MoveGroupInterface::Plan plan;
-    MoveGroupInterface::plan(plan);
-    return py_bindings_tools::serializeMsg(plan.trajectory_);
-  }
-
   bp::tuple planPython()
   {
     MoveGroupInterface::Plan plan;
@@ -612,7 +605,6 @@ static void wrap_move_group_interface()
   MoveGroupInterfaceClass.def("set_planner_id", &MoveGroupInterfaceWrapper::setPlannerId);
   MoveGroupInterfaceClass.def("get_planner_id", &MoveGroupInterfaceWrapper::getPlannerIdCStr);
   MoveGroupInterfaceClass.def("set_num_planning_attempts", &MoveGroupInterfaceWrapper::setNumPlanningAttempts);
-  MoveGroupInterfaceClass.def("compute_plan", &MoveGroupInterfaceWrapper::getPlanPython);
   MoveGroupInterfaceClass.def("plan", &MoveGroupInterfaceWrapper::planPython);
   MoveGroupInterfaceClass.def("compute_cartesian_path", &MoveGroupInterfaceWrapper::computeCartesianPathPython);
   MoveGroupInterfaceClass.def("set_support_surface_name", &MoveGroupInterfaceWrapper::setSupportSurfaceName);
