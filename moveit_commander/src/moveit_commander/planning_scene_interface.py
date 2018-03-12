@@ -77,28 +77,28 @@ class PlanningSceneInterface(object):
             else:
                 self._pub_co.publish(collision_object)
 
-    def add_sphere(self, name, pose, radius = 1):
+    def add_sphere(self, name, pose, radius=1):
         """
         Add a sphere to the planning scene 
         """
         co = self.__make_sphere(name, pose, radius)
         self.__submit(co, attach=False)
 
-    def add_mesh(self, name, pose, filename, size = (1, 1, 1)):
+    def add_mesh(self, name, pose, filename, size=(1, 1, 1)):
         """
         Add a mesh to the planning scene
         """
         co = self.__make_mesh(name, pose, filename, size)
         self.__submit(co, attach=False)
 
-    def add_box(self, name, pose, size = (1, 1, 1)):
+    def add_box(self, name, pose, size=(1, 1, 1)):
         """
         Add a box to the planning scene 
         """
         co = self.__make_box(name, pose, size)
         self.__submit(co, attach=False)
 
-    def add_plane(self, name, pose, normal = (0, 0, 1), offset = 0):
+    def add_plane(self, name, pose, normal=(0, 0, 1), offset=0):
         """ Add a plane to the planning scene """
         co = CollisionObject()
         co.operation = CollisionObject.ADD
@@ -110,8 +110,8 @@ class PlanningSceneInterface(object):
         co.planes = [p]
         co.plane_poses = [pose.pose]
         self.__submit(co, attach=False)
-        
-    def attach_mesh(self, link, name, pose = None, filename = '', size = (1, 1, 1), touch_links = []):
+
+    def attach_mesh(self, link, name, pose=None, filename='', size=(1, 1, 1), touch_links=[]):
         aco = AttachedCollisionObject()
         if (pose is not None) and filename:
             aco.object = self.__make_mesh(name, pose, filename, size)
@@ -123,7 +123,7 @@ class PlanningSceneInterface(object):
             aco.touch_links = touch_links
         self.__submit(aco, attach=True)
 
-    def attach_box(self, link, name, pose = None, size = (1, 1, 1), touch_links = []):
+    def attach_box(self, link, name, pose=None, size=(1, 1, 1), touch_links=[]):
         aco = AttachedCollisionObject()
         if pose is not None:
             aco.object = self.__make_box(name, pose, size)
@@ -136,7 +136,7 @@ class PlanningSceneInterface(object):
             aco.touch_links = [link]
         self.__submit(aco, attach=True)
 
-    def remove_world_object(self, name = None):
+    def remove_world_object(self, name=None):
         """
         Remove an object from planning scene, or all if no name is provided         
         """
@@ -146,7 +146,7 @@ class PlanningSceneInterface(object):
             co.id = name
         self.__submit(co, attach=True)
 
-    def remove_attached_object(self, link, name = None):
+    def remove_attached_object(self, link, name=None):
         """
         Remove an attached object from planning scene, or all objects attached to this link if no name is provided             
         """
@@ -157,13 +157,13 @@ class PlanningSceneInterface(object):
             aco.object.id = name
         self.__submit(aco, attach=True)
 
-    def get_known_object_names(self, with_type = False):
+    def get_known_object_names(self, with_type=False):
         """
         Get the names of all known objects in the world. If with_type is set to true, only return objects that have a known type.
         """
         return self._psi.get_known_object_names(with_type)
 
-    def get_known_object_names_in_roi(self, minx, miny, minz, maxx, maxy, maxz, with_type = False):
+    def get_known_object_names_in_roi(self, minx, miny, minz, maxx, maxy, maxz, with_type=False):
         """
         Get the names of known objects in the world that are located within a bounding region (specified in the frame reported by
         get_planning_frame()). If with_type is set to true, only return objects that have a known type.
@@ -180,9 +180,9 @@ class PlanningSceneInterface(object):
             msg = Pose()
             conversions.msg_from_string(msg, ser_ops[key])
             ops[key] = msg
-        return ops 
+        return ops
 
-    def get_objects(self, object_ids = []):
+    def get_objects(self, object_ids=[]):
         """
         Get the objects identified by the given object ids list. If no ids are provided, return all the known objects.
         """
@@ -192,9 +192,9 @@ class PlanningSceneInterface(object):
             msg = CollisionObject()
             conversions.msg_from_string(msg, ser_objs[key])
             objs[key] = msg
-        return objs 
+        return objs
 
-    def get_attached_objects(self, object_ids = []):
+    def get_attached_objects(self, object_ids=[]):
         """
         Get the attached objects identified by the given object ids list. If no ids are provided, return all the attached objects.
         """
