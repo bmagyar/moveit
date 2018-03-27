@@ -41,6 +41,27 @@
 #include <moveit/robot_state/conversions.h>
 #include <moveit_msgs/MotionPlanRequest.h>
 
+geometry_msgs::Pose constraintsToPose(moveit_msgs::Constraints c)
+{
+ geometry_msgs::Pose pose;
+ pose.position = c.position_constraints[0].constraint_region.primitive_poses[0].position;
+ pose.orientation = c.orientation_constraints[0].orientation;
+ return pose;
+}
+
+sensor_msgs::JointState positionConstraintsToJointState(std::vector<moveit_msgs::JointConstraint> joint_constraints)
+{
+  sensor_msgs::JointState js;
+  for (const auto c : joint_constraints)
+  {
+    js.name.push_back(c.joint_name);
+    js.position.push_back(c.position);
+    ROS_INFO_STREAM("Setting joint " << c.joint_name <<
+                    " to position " << c.position);
+  }
+  return js;
+}
+
 namespace chomp
 {
 ChompPlanner::ChompPlanner()
@@ -51,6 +72,9 @@ bool ChompPlanner::solve(const planning_scene::PlanningSceneConstPtr& planning_s
                          const moveit_msgs::MotionPlanRequest& req, const chomp::ChompParameters& params,
                          moveit_msgs::MotionPlanDetailedResponse& res) const
 {
+  const moveit::core::JointModelGroup* model_group =
+    planning_scene->getRobotModel()->getJointModelGroup(req.group_name);
+
   if (!planning_scene)
   {
     ROS_ERROR_STREAM_NAMED("chomp_planner", "No planning scene initialized.");
@@ -85,28 +109,32 @@ bool ChompPlanner::solve(const planning_scene::PlanningSceneConstPtr& planning_s
     return false;
   }
 
-  if (req.goal_constraints[0].joint_constraints.empty())
+  sensor_msgs::JointState goal_joint_state;
+
+  if (not req.goal_constraints[0].joint_constraints.empty())
   {
-    ROS_ERROR_STREAM("Only joint-space goals are supported");
+    ROS_DEBUG_NAMED("chomp_planner", "Using provided joint-space goal");
+    goal_joint_state = positionConstraintsToJointState(req.goal_constraints[0].joint_constraints);
+  } else if ((not req.goal_constraints[0].position_constraints.empty()) and
+             (not req.goal_constraints[0].orientation_constraints.empty()))
+  {
+    robot_model::RobotState state = planning_scene->getCurrentState();
+    state.setFromIK(model_group, constraintsToPose(req.goal_constraints[0]));
+    goal_joint_state.name = state.getVariableNames();
+    goal_joint_state.position = std::vector<double>(state.getVariablePositions(), state.getVariablePositions()+ state.getVariableCount());
+  }
+  else
+  {
+    ROS_ERROR_STREAM_NAMED("chomp_planner", "No goal constraints specified!");
     res.error_code.val = moveit_msgs::MoveItErrorCodes::INVALID_GOAL_CONSTRAINTS;
     return false;
   }
 
   int goal_index = trajectory.getNumPoints() - 1;
   trajectory.getTrajectoryPoint(goal_index) = trajectory.getTrajectoryPoint(0);
-  sensor_msgs::JointState js;
-  for (unsigned int i = 0; i < req.goal_constraints[0].joint_constraints.size(); i++)
-  {
-    js.name.push_back(req.goal_constraints[0].joint_constraints[i].joint_name);
-    js.position.push_back(req.goal_constraints[0].joint_constraints[i].position);
-    ROS_INFO_STREAM_NAMED("chomp_planner", "Setting joint " << req.goal_constraints[0].joint_constraints[i].joint_name
-                                                            << " to position "
-                                                            << req.goal_constraints[0].joint_constraints[i].position);
-  }
-  jointStateToArray(planning_scene->getRobotModel(), js, req.group_name, trajectory.getTrajectoryPoint(goal_index));
+  jointStateToArray(planning_scene->getRobotModel(), goal_joint_state, 
+                    req.group_name, trajectory.getTrajectoryPoint(goal_index));
 
-  const moveit::core::JointModelGroup* model_group =
-      planning_scene->getRobotModel()->getJointModelGroup(req.group_name);
   // fix the goal to move the shortest angular distance for wrap-around joints:
   for (size_t i = 0; i < model_group->getActiveJointModels().size(); i++)
   {
@@ -201,11 +229,11 @@ bool ChompPlanner::solve(const planning_scene::PlanningSceneConstPtr& planning_s
   res.processing_time.push_back((ros::WallTime::now() - start_time).toSec());
 
   // report planning failure if path has collisions
-  if (not optimizer.isCollisionFree())
-  {
-    res.error_code.val = moveit_msgs::MoveItErrorCodes::INVALID_MOTION_PLAN;
-    return false;
-  }
+//  if (not optimizer.isCollisionFree())
+//  {
+//    res.error_code.val = moveit_msgs::MoveItErrorCodes::INVALID_MOTION_PLAN;
+//    return false;
+//  }
 
   // check that final state is within goal tolerances
   kinematic_constraints::JointConstraint jc(planning_scene->getRobotModel());
