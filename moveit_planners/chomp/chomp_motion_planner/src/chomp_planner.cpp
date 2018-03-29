@@ -229,11 +229,11 @@ bool ChompPlanner::solve(const planning_scene::PlanningSceneConstPtr& planning_s
   res.processing_time.push_back((ros::WallTime::now() - start_time).toSec());
 
   // report planning failure if path has collisions
-//  if (not optimizer.isCollisionFree())
-//  {
-//    res.error_code.val = moveit_msgs::MoveItErrorCodes::INVALID_MOTION_PLAN;
-//    return false;
-//  }
+  if (not optimizer.isCollisionFree())
+  {
+    res.error_code.val = moveit_msgs::MoveItErrorCodes::INVALID_MOTION_PLAN;
+    return false;
+  }
 
   // check that final state is within goal tolerances
   kinematic_constraints::JointConstraint jc(planning_scene->getRobotModel());
