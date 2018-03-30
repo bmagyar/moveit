@@ -114,13 +114,22 @@ bool ChompPlanner::solve(const planning_scene::PlanningSceneConstPtr& planning_s
   {
     ROS_DEBUG_NAMED("chomp_planner", "Using provided joint-space goal");
     goal_joint_state = positionConstraintsToJointState(req.goal_constraints[0].joint_constraints);
-  } else if ((not req.goal_constraints[0].position_constraints.empty()) and
-             (not req.goal_constraints[0].orientation_constraints.empty()))
+  } 
+  else if ((not req.goal_constraints[0].position_constraints.empty()) and
+           (not req.goal_constraints[0].orientation_constraints.empty()))
   {
     robot_model::RobotState state = planning_scene->getCurrentState();
-    state.setFromIK(model_group, constraintsToPose(req.goal_constraints[0]));
-    goal_joint_state.name = state.getVariableNames();
-    goal_joint_state.position = std::vector<double>(state.getVariablePositions(), state.getVariablePositions()+ state.getVariableCount());
+    if (state.setFromIK(model_group, constraintsToPose(req.goal_constraints[0])))
+    {
+      goal_joint_state.name = state.getVariableNames();
+      goal_joint_state.position = std::vector<double>(state.getVariablePositions(), state.getVariablePositions()+ state.getVariableCount());
+    }
+    else
+    {
+      ROS_ERROR_STREAM_NAMED("chomp_planner", "IK failed for goal position");
+      res.error_code.val = moveit_msgs::MoveItErrorCodes::INVALID_GOAL_CONSTRAINTS;
+      return false; 
+    }
   }
   else
   {
@@ -155,7 +164,7 @@ bool ChompPlanner::solve(const planning_scene::PlanningSceneConstPtr& planning_s
 
   const Eigen::MatrixXd goal_state = trajectory.getTrajectoryPoint(goal_index);
 
-  if (not planning_scene->getRobotModel()->satisfiesPositionBounds(goal_state.data()))
+  if (not planning_scene->getRobotModel()->satisfiesPositionBounds(goal_state.data(), 0.01))
   {
     ROS_ERROR_STREAM_NAMED("chomp_planner", "Goal state violates joint limits");
     res.error_code.val = moveit_msgs::MoveItErrorCodes::INVALID_ROBOT_STATE;
