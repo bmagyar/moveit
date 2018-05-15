@@ -330,7 +330,7 @@ void ChompOptimizer::optimize()
   {
     ros::WallTime for_time = ros::WallTime::now();
     performForwardKinematics();
-    ROS_INFO_STREAM("Forward kinematics took " << (ros::WallTime::now() - for_time));
+    //ROS_INFO_STREAM("Forward kinematics took " << (ros::WallTime::now() - for_time));
     double cCost = getCollisionCost();
     double sCost = getSmoothnessCost();
     double cost = cCost + sCost;
