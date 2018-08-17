@@ -36,6 +36,7 @@
 
 #include <moveit/robot_model/prismatic_joint_model.h>
 #include <limits>
+#include <ros/console.h>
 
 namespace moveit
 {
@@ -74,7 +75,12 @@ void PrismaticJointModel::getVariableDefaultPositions(double* values, const Boun
 
 bool PrismaticJointModel::satisfiesPositionBounds(const double* values, const Bounds& bounds, double margin) const
 {
-  return !(values[0] < bounds[0].min_position_ - margin || values[0] > bounds[0].max_position_ + margin);
+  if (values[0] < bounds[0].min_position_ - margin || values[0] > bounds[0].max_position_ + margin)
+  {
+    ROS_ERROR_STREAM(getName() << " bounds violated, " << (bounds[0].min_position_ - margin) << " < " << values[0] << " < " << (bounds[0].max_position_ + margin));
+    return false;
+  }
+  return true;
 }
 
 void PrismaticJointModel::getVariableRandomPositions(random_numbers::RandomNumberGenerator& rng, double* values,

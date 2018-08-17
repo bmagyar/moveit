@@ -113,6 +113,7 @@ void planning_pipeline::PlanningPipeline::configure()
   }
   try
   {
+    ROS_ERROR_STREAM("Loading " << planner_plugin_name_);
     planner_instance_.reset(planner_plugin_loader_->createUnmanagedInstance(planner_plugin_name_));
     if (!planner_instance_->initialize(kmodel_, nh_.getNamespace()))
       throw std::runtime_error("Unable to initialize planning plugin");
