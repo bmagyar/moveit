@@ -36,6 +36,7 @@
 
 #include <moveit/robot_model/prismatic_joint_model.h>
 #include <limits>
+#include <ros/console.h>
 
 moveit::core::PrismaticJointModel::PrismaticJointModel(const std::string& name) : JointModel(name), axis_(0.0, 0.0, 0.0)
 {
@@ -72,7 +73,10 @@ bool moveit::core::PrismaticJointModel::satisfiesPositionBounds(const double* va
                                                                 double margin) const
 {
   if (values[0] < bounds[0].min_position_ - margin || values[0] > bounds[0].max_position_ + margin)
+  {
+    ROS_ERROR_STREAM(getName() << " bounds violated, " << (bounds[0].min_position_ - margin) << " < " << values[0] << " < " << (bounds[0].max_position_ + margin));
     return false;
+  }
   return true;
 }
 

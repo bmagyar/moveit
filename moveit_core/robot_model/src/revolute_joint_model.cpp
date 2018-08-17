@@ -40,6 +40,7 @@
 #include <algorithm>
 #include <limits>
 #include <cmath>
+#include <ros/console.h>
 
 moveit::core::RevoluteJointModel::RevoluteJointModel(const std::string& name)
   : JointModel(name)
@@ -167,7 +168,10 @@ bool moveit::core::RevoluteJointModel::satisfiesPositionBounds(const double* val
                                                                double margin) const
 {
   if (values[0] < bounds[0].min_position_ - margin || values[0] > bounds[0].max_position_ + margin)
+  {
+    ROS_ERROR_STREAM(getName() << " bounds violated, " << (bounds[0].min_position_ - margin) << " < " << values[0] << " < " << (bounds[0].max_position_ + margin));
     return false;
+  }
   return true;
 }
 
